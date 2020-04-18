@@ -1,6 +1,7 @@
 package br.com.store.model.auth;
 
 import br.com.store.model.AbstractEntity;
+import br.com.store.model.ShoppingCart;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,9 @@ public class StoreUser extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private ShoppingCart shoppingCart;
 
     @JsonIgnore
     public String[] getStrRoles() {

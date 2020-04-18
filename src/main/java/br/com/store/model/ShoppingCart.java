@@ -14,9 +14,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class ShoppingCart extends AbstractEntity {
 
-    @OneToOne
-    private StoreUser storeUser;
-
     private double totalValue;
 
     private double totalDiscount;

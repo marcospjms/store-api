@@ -13,4 +13,5 @@ import javax.persistence.Table;
 @Setter
 @NoArgsConstructor
 public class Category extends AbstractEntity {
+    private String description;
 }

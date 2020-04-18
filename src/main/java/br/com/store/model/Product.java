@@ -21,4 +21,8 @@ public class Product extends AbstractEntity {
     private double price;
 
     private double totalDiscount;
+
+    private String description;
+
+    private String specification;
 }
