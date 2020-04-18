@@ -22,22 +22,21 @@ public class Discount extends AbstractEntity {
 
     private String code;
     /**
-     * Taxa de desconto. Se discountType for RELATIVE, deverá ser entre 0 e 1. Se for ABSOLUTE poderá ser qualquer valor.
+     * Taxa de desconto. Se type for RELATIVE, deverá ser entre 0 e 1. Se for ABSOLUTE poderá ser qualquer valor.
      */
     private double discountRate;
 
     @Enumerated(EnumType.STRING)
-    private PaymentType paymentTypes;
+    private DiscountType type;
 
     @Enumerated(EnumType.STRING)
-    private DiscountType discountType;
+    private PaymentType paymentTypes;
 
     @ManyToOne
     private Category category;
 
-    private boolean cumulative;
-
-    private boolean toShoppingCart;
+    @Column(columnDefinition = "boolean default true")
+    private boolean cumulative = true;
 
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
@@ -52,8 +51,8 @@ public class Discount extends AbstractEntity {
     private long maxCounter;
 
     public void setDiscountRate(double discountRate) {
-        if (this.discountType == null) {
-            throw new RuntimeException("Impossível definir a taxa de desconto: sem nenhum discountType definido");
+        if (this.type == null) {
+            throw new RuntimeException("Impossível definir a taxa de desconto: sem nenhum type definido");
         }
         this.checkDiscountRate(discountRate);
         this.discountRate = discountRate;
@@ -68,17 +67,17 @@ public class Discount extends AbstractEntity {
     }
 
     private void checkDiscountRate(double discountRate) {
-        switch (this.discountType) {
+        switch (this.type) {
             case ABSOLUTE:
                 break;
             case RELATIVE:
                 if (discountRate < 0 || discountRate > 1) {
-                    throw new RuntimeException("Impossível definir a taxa de desconto: discountType RELATIVE só " +
+                    throw new RuntimeException("Impossível definir a taxa de desconto: type RELATIVE só " +
                             "permite valor entre 0 e 1");
                 }
                 break;
             default:
-                throw new RuntimeException("Impossível definir a taxa de desconto: discountType desconhecido");
+                throw new RuntimeException("Impossível definir a taxa de desconto: type desconhecido");
         }
     }
 
