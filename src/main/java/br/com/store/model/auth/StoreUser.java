@@ -35,9 +35,6 @@ public class StoreUser extends AbstractEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private ShoppingCart shoppingCart;
-
     @JsonIgnore
     public String[] getStrRoles() {
         if (this.roles == null) {
