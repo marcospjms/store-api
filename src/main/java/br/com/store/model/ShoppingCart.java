@@ -18,6 +18,6 @@ public class ShoppingCart extends AbstractEntity {
 
     private double totalDiscount;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     private StoreUser storeUser;
 }
