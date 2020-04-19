@@ -22,8 +22,16 @@ public class CustomerPublicController {
     private StoreUserService userService;
 
     @PostMapping(value = "")
-    public ResponseEntity<StoreUser> save(@RequestBody StoreUser storeUser) {
-        return new ResponseEntity<>(this.userService.createUser(storeUser), HttpStatus.OK);
+    public ResponseEntity<StoreUser> createStoreUser(@RequestBody StoreUser storeUser) {
+        return new ResponseEntity<>(this.userService.createUser(storeUser, false), HttpStatus.OK);
+    }
+
+    /**
+     * Para facilitar o teste sem precisar mexer no banco.
+     */
+    @PostMapping(value = "admin")
+    public ResponseEntity<StoreUser> createStoreUserAdmin(@RequestBody StoreUser storeUser) {
+        return new ResponseEntity<>(this.userService.createUser(storeUser, true), HttpStatus.OK);
     }
 
     public ResponseEntity<String> listAll(Pageable pageable) {

@@ -20,12 +20,19 @@ public class StoreUserService {
     @Autowired
     private StoreUserRepository repository;
 
-    public StoreUser createUser(StoreUser storeUser) {
+    public StoreUser createUser(StoreUser storeUser, boolean admin) {
         storeUser.setId(null);
-        storeUser.setRoles(new HashSet<Role>(){{add(Role.CUSTOMER);}});
+        storeUser.setRoles(new HashSet<Role>(){{
+            add(Role.CUSTOMER);
+            if (admin) {
+                add(Role.ADMIN);
+            }
+        }});
         storeUser.setPassword(this.encoder.encode(storeUser.getPassword()));
         AbstractEntityUtil.normalizeEntity(storeUser);
-        return repository.save(storeUser);
+        repository.save(storeUser);
+        storeUser.setPassword(null);
+        return storeUser;
     }
 
     /**

@@ -21,8 +21,10 @@ public abstract class AbstractEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     protected Long id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String normalizedName;
     /**
      * Indica se a entidade vai ser visível para usuário que não seja admin
@@ -32,6 +34,7 @@ public abstract class AbstractEntity {
 
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)
+    @Column(updatable = false)
     protected DateTime created;
 
     @JsonSerialize(using = DateTimeSerializer.class)

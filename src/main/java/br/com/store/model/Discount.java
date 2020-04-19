@@ -20,7 +20,11 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class Discount extends AbstractEntity {
 
+    @Column(nullable = false)
     private String code;
+
+    @Column(nullable = false)
+    private String description;
     /**
      * Taxa de desconto. Se type for RELATIVE, deverá ser entre 0 e 1. Se for ABSOLUTE poderá ser qualquer valor.
      */
