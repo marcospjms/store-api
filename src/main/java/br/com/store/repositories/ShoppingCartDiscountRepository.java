@@ -14,11 +14,12 @@ import java.util.List;
 public interface ShoppingCartDiscountRepository extends CrudRepository<ShoppingCartDiscount, Long>,
         QueryByExampleExecutor<ShoppingCartDiscount> {
 
-    @Query("SELECT shoppingCartDiscount FROM ShoppingCart shoppingCartDiscount")
+    @Query("SELECT shoppingCartDiscount FROM ShoppingCartDiscount shoppingCartDiscount")
     List<ShoppingCartDiscount> findAll(Pageable pageable);
 
-    @Query("SELECT shoppingCartDiscount FROM ShoppingCart shoppingCartDiscount " +
-            "LEFT OUTER JOIN shoppingCartDiscount.storeUser " +
-            "WHERE shoppingCartDiscount.storeUser.id = :storeUserId")
+    @Query("SELECT shoppingCartDiscount FROM ShoppingCartDiscount shoppingCartDiscount " +
+            "LEFT OUTER JOIN shoppingCartDiscount.shoppingCart " +
+            "LEFT OUTER JOIN shoppingCartDiscount.shoppingCart.storeUser " +
+            "WHERE shoppingCartDiscount.shoppingCart.storeUser.id = :storeUserId")
     List<ShoppingCartDiscount> findByStoreUserId(Pageable pageable, @Param("storeUserId") long storeUserId);
 }

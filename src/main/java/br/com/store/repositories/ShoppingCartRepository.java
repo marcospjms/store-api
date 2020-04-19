@@ -1,6 +1,7 @@
 package br.com.store.repositories;
 
 import br.com.store.model.ShoppingCart;
+import br.com.store.model.ShoppingCartDiscount;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -15,4 +16,9 @@ public interface ShoppingCartRepository extends CrudRepository<ShoppingCart, Lon
 
     @Query("SELECT shoppingCart FROM ShoppingCart shoppingCart")
     List<ShoppingCart> findAll(Pageable pageable);
+
+    @Query("SELECT shoppingCart FROM ShoppingCart shoppingCart " +
+            "LEFT OUTER JOIN shoppingCart.storeUser " +
+            "WHERE shoppingCart.storeUser.id = :storeUserId")
+    List<ShoppingCart> findByStoreUserId(@Param("storeUserId") long storeUserId);
 }
