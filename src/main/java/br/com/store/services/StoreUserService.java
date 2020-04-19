@@ -22,7 +22,7 @@ public class StoreUserService {
 
     public StoreUser createUser(StoreUser storeUser) {
         storeUser.setId(null);
-        storeUser.setRoles(new HashSet<>(){{add(Role.CUSTOMER);}});
+        storeUser.setRoles(new HashSet<Role>(){{add(Role.CUSTOMER);}});
         storeUser.setPassword(this.encoder.encode(storeUser.getPassword()));
         AbstractEntityUtil.normalizeEntity(storeUser);
         return repository.save(storeUser);
