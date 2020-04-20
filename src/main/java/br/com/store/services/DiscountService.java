@@ -3,6 +3,7 @@ package br.com.store.services;
 import br.com.store.model.Discount;
 import br.com.store.repositories.DiscountRepository;
 import br.com.store.util.AbstractEntityUtil;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,11 @@ public class DiscountService {
 
     public Discount findById(Long id) {
         return repository.findById(id).get();
+    }
+
+    public Discount findValidByCode(String code) {
+        List<Discount> discounts = this.repository.findByCodeAndDate(code, DateTime.now());
+        return discounts != null && discounts.isEmpty() ? discounts.get(0) : null;
     }
 
     public boolean has(Long id) {

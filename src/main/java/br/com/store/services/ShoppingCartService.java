@@ -58,15 +58,24 @@ public class ShoppingCartService {
         return repository.findById(id).get();
     }
 
-    public ShoppingCart findByStoreUserId(Long id) {
-        List<ShoppingCart> shoppingCarts = repository.findByStoreUserId(id);
-        return shoppingCarts != null && !shoppingCarts.isEmpty() ? shoppingCarts.get(0) : null;
+    public ShoppingCart findByStoreUser(StoreUser customer) {
+        List<ShoppingCart> shoppingCarts = repository.findByStoreUserId(customer.getId());
+        if (shoppingCarts.size() > 1) {
+            throw new RuntimeException("Usuário com mais de um carinho de compra. Impossível saber o correto.");
+        }
+        if (!shoppingCarts.isEmpty()) {
+            return shoppingCarts.get(0);
+        } else {
+            ShoppingCart shoppingCart = new ShoppingCart();
+            shoppingCart.setStoreUser(customer);
+            return this.save(shoppingCart);
+        }
     }
 
     public ShoppingCartProduct addProduct(String username, Long productId) {
         StoreUser customer = this.userService.findByUsername(username);
         Product product = this.productService.findById(productId);
-        ShoppingCart shoppingCart = this.findByStoreUserId(customer.getId());
+        ShoppingCart shoppingCart = this.findByStoreUser(customer);
         ShoppingCartProduct shoppingCartProduct = new ShoppingCartProduct();
         shoppingCartProduct.setProduct(product);
         shoppingCartProduct.setShoppingCart(shoppingCart);
@@ -79,10 +88,13 @@ public class ShoppingCartService {
                 .stream().map(scp -> scp.getProduct()).collect(Collectors.toList());
     }
 
-    public ShoppingCartDiscount addDiscount(String username, Long discountId) {
+    public ShoppingCartDiscount addDiscount(String username, String discountCode) {
+        Discount discount = this.discountService.findValidByCode(discountCode);
+        if (discount == null) {
+            throw new RuntimeException("Código inválido");
+        }
         StoreUser customer = this.userService.findByUsername(username);
-        Discount discount = this.discountService.findById(discountId);
-        ShoppingCart shoppingCart = this.findByStoreUserId(customer.getId());
+        ShoppingCart shoppingCart = this.findByStoreUser(customer);
         ShoppingCartDiscount shoppingCartDiscount = new ShoppingCartDiscount();
         shoppingCartDiscount.setDiscount(discount);
         shoppingCartDiscount.setShoppingCart(shoppingCart);

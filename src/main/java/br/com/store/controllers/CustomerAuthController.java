@@ -63,8 +63,8 @@ public class CustomerAuthController {
 
     @PostMapping(value = "discounts")
     public ResponseEntity<ShoppingCartDiscount> addDiscount(@AuthenticationPrincipal UserDetails userDetails,
-                                                           @RequestParam(value = "discountId") Long discountId) {
-        return new ResponseEntity<>(this.shoppingCartService.addDiscount(userDetails.getUsername(), discountId), HttpStatus.OK);
+                                                           @RequestParam(value = "discountCode") String discountCode) {
+        return new ResponseEntity<>(this.shoppingCartService.addDiscount(userDetails.getUsername(), discountCode), HttpStatus.OK);
     }
 
     @GetMapping(value = "dicounts")
