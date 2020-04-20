@@ -87,30 +87,4 @@ public class Discount extends AbstractEntity {
     private boolean isValidProduct(Product product) {
         return this.category == null || this.category.equals(product.getCategory());
     }
-
-    public static List<Discount> getBestDiscountsByProducts(List<Discount> discounts, List<Product> products, PaymentType paymentType) {
-        List<Discount> cumulativeDiscounts = getCumulativeDiscounts(discounts);
-        List<Discount> nonCumulativeDiscounts = getNonCumulativeDiscounts(discounts);
-
-        Double totalCumulativeDiscount = calcTotalDiscounts(cumulativeDiscounts, products, paymentType);
-        Double totalNonCumulativeDiscount = calcTotalDiscounts(nonCumulativeDiscounts, products, paymentType);
-
-        return totalCumulativeDiscount > totalNonCumulativeDiscount ? cumulativeDiscounts : nonCumulativeDiscounts;
-    }
-
-    private static List<Discount> getCumulativeDiscounts(List<Discount> discounts) {
-        return discounts.stream().filter(discount -> discount.cumulative).collect(Collectors.toList());
-    }
-
-    private static List<Discount> getNonCumulativeDiscounts(List<Discount> discounts) {
-        return discounts.stream().filter(discount -> !discount.cumulative).collect(Collectors.toList());
-    }
-
-    public static double calcTotalDiscounts(List<Discount> discounts, List<Product> products, PaymentType paymentType) {
-        return discounts.stream().reduce(
-                0.0,
-                (subtotal, discount) -> subtotal + discount.calculate(products, paymentType),
-                Double::sum
-        );
-    }
 }

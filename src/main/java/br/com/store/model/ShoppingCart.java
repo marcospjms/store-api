@@ -24,10 +24,4 @@ public class ShoppingCart extends AbstractEntity {
 
     @OneToOne(cascade = CascadeType.ALL, optional = false)
     private StoreUser storeUser;
-
-    public void calc(List<Product> products, List<Discount> discounts) {
-        List<Discount> bestDiscounts = Discount.getBestDiscountsByProducts(discounts, products, this.paymentType);
-        this.discount = Discount.calcTotalDiscounts(bestDiscounts, products, this.paymentType);
-        this.cost = Product.calcTotalCost(products);
-    }
 }

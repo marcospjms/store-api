@@ -53,13 +53,16 @@ public class ShoppingCartService {
         return repository.findAll(AbstractEntityUtil.createExample(new ShoppingCart(), query), pageable).getContent();
     }
 
-
     public ShoppingCart findById(Long id) {
         return repository.findById(id).get();
     }
 
+    public boolean has(Long id) {
+        return repository.findById(id).isPresent();
+    }
+
     public ShoppingCart findByStoreUser(StoreUser customer) {
-        List<ShoppingCart> shoppingCarts = repository.findByStoreUserId(customer.getId());
+        List<ShoppingCart> shoppingCarts = repository.findByUsername(customer.getUsername());
         if (shoppingCarts.size() > 1) {
             throw new RuntimeException("Usuário com mais de um carinho de compra. Impossível saber o correto.");
         }
@@ -79,13 +82,9 @@ public class ShoppingCartService {
         ShoppingCartProduct shoppingCartProduct = new ShoppingCartProduct();
         shoppingCartProduct.setProduct(product);
         shoppingCartProduct.setShoppingCart(shoppingCart);
-        return shoppingCartProductRepository.save(shoppingCartProduct);
-    }
-
-    public List<Product> findProductsByUsername(Pageable pageable, String username) {
-        StoreUser customer = this.userService.findByUsername(username);
-        return this.shoppingCartProductRepository.findByStoreUserId(pageable, customer.getId())
-                .stream().map(scp -> scp.getProduct()).collect(Collectors.toList());
+        shoppingCartProduct = shoppingCartProductRepository.save(shoppingCartProduct);
+        this.updateShoppingCart(username);
+        return shoppingCartProduct;
     }
 
     public ShoppingCartDiscount addDiscount(String username, String discountCode) {
@@ -98,16 +97,44 @@ public class ShoppingCartService {
         ShoppingCartDiscount shoppingCartDiscount = new ShoppingCartDiscount();
         shoppingCartDiscount.setDiscount(discount);
         shoppingCartDiscount.setShoppingCart(shoppingCart);
-        return shoppingCartDiscountRepository.save(shoppingCartDiscount);
+        shoppingCartDiscount= shoppingCartDiscountRepository.save(shoppingCartDiscount);
+        this.updateShoppingCart(username);
+        return shoppingCartDiscount;
+    }
+
+    public void updateShoppingCart(String username) {
+        StoreUser customer = this.userService.findByUsername(username);
+        ShoppingCart shoppingCart = this.findByStoreUser(customer);
+        List<Product> products = this.findAllProductsByUsername(username);
+        List<Discount> discounts = this.findDiscountByUsername(username);;
+
+        shoppingCart.setDiscount(this.discountService.calcDiscount(discounts, products, shoppingCart.getPaymentType()));
+        shoppingCart.setCost(this.productService.calcTotalCost(products));
+
+        this.save(shoppingCart);
+    }
+
+    public List<Product> findProductsByUsername(Pageable pageable, String username) {
+        return this.toProducts(this.shoppingCartProductRepository.findByUsername(pageable, username));
+    }
+
+    public List<Product> findAllProductsByUsername(String username) {
+        return this.toProducts(this.shoppingCartProductRepository.findByUsername(username));
     }
 
     public List<Discount> findDiscountByUsername(Pageable pageable, String username) {
-        StoreUser customer = this.userService.findByUsername(username);
-        return this.shoppingCartDiscountRepository.findByStoreUserId(pageable, customer.getId())
-                .stream().map(scp -> scp.getDiscount()).collect(Collectors.toList());
+        return this.toDiscounts(this.shoppingCartDiscountRepository.findByUsername(pageable, username));
     }
 
-    public boolean has(Long id) {
-        return repository.findById(id).isPresent();
+    public List<Discount> findDiscountByUsername(String username) {
+        return this.toDiscounts(this.shoppingCartDiscountRepository.findByUsername(username));
+    }
+
+    private List<Discount> toDiscounts(List<ShoppingCartDiscount> shoppingCartDiscounts) {
+        return shoppingCartDiscounts.stream().map(scp -> scp.getDiscount()).collect(Collectors.toList());
+    }
+
+    private List<Product> toProducts(List<ShoppingCartProduct> shoppingCartProducts) {
+        return shoppingCartProducts.stream().map(scp -> scp.getProduct()).collect(Collectors.toList());
     }
 }

@@ -28,8 +28,4 @@ public class Product extends AbstractEntity {
     private String description;
 
     private String specification;
-
-    public static double calcTotalCost(List<Product> products) {
-        return products.stream().reduce(0.0, (subtotal, product) -> subtotal + product.getPrice(), Double::sum);
-    }
 }

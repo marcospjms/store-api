@@ -21,6 +21,12 @@ public interface ShoppingCartProductRepository extends CrudRepository<ShoppingCa
     @Query("SELECT shoppingCartProduct FROM ShoppingCartProduct shoppingCartProduct " +
             "LEFT OUTER JOIN shoppingCartProduct.shoppingCart " +
             "LEFT OUTER JOIN shoppingCartProduct.shoppingCart.storeUser " +
-            "WHERE shoppingCartProduct.shoppingCart.storeUser.id = :storeUserId")
-    List<ShoppingCartProduct> findByStoreUserId(Pageable pageable, @Param("storeUserId") long storeUserId);
+            "WHERE shoppingCartProduct.shoppingCart.storeUser.username = :username")
+    List<ShoppingCartProduct> findByUsername(Pageable pageable, @Param("username") String username);
+
+    @Query("SELECT shoppingCartProduct FROM ShoppingCartProduct shoppingCartProduct " +
+            "LEFT OUTER JOIN shoppingCartProduct.shoppingCart " +
+            "LEFT OUTER JOIN shoppingCartProduct.shoppingCart.storeUser " +
+            "WHERE shoppingCartProduct.shoppingCart.storeUser.username = :username")
+    List<ShoppingCartProduct> findByUsername(@Param("username") String username);
 }

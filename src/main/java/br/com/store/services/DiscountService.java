@@ -1,6 +1,8 @@
-package br.com.store.services;
+    package br.com.store.services;
 
 import br.com.store.model.Discount;
+import br.com.store.model.PaymentType;
+import br.com.store.model.Product;
 import br.com.store.repositories.DiscountRepository;
 import br.com.store.util.AbstractEntityUtil;
 import org.joda.time.DateTime;
@@ -9,9 +11,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
-@Service
+    @Service
 public class DiscountService {
 
     @Autowired
@@ -47,5 +50,36 @@ public class DiscountService {
 
     public boolean has(Long id) {
         return repository.findById(id).isPresent();
+    }
+
+    public double calcDiscount(List<Discount> discounts, List<Product> products, PaymentType paymentType) {
+        List<Discount> bestDiscounts = this.getAppliedDiscounts(discounts, products, paymentType);
+        return this.sumDiscounts(bestDiscounts, products, paymentType);
+    }
+
+    public List<Discount> getAppliedDiscounts(List<Discount> discounts, List<Product> products, PaymentType paymentType) {
+        List<Discount> cumulativeDiscounts = getCumulativeDiscounts(discounts);
+        List<Discount> nonCumulativeDiscounts = getNonCumulativeDiscounts(discounts);
+
+        Double totalCumulativeDiscount = sumDiscounts(cumulativeDiscounts, products, paymentType);
+        Double totalNonCumulativeDiscount = sumDiscounts(nonCumulativeDiscounts, products, paymentType);
+
+        return totalCumulativeDiscount > totalNonCumulativeDiscount ? cumulativeDiscounts : nonCumulativeDiscounts;
+    }
+
+    public List<Discount> getCumulativeDiscounts(List<Discount> discounts) {
+        return discounts.stream().filter(discount -> discount.isCumulative()).collect(Collectors.toList());
+    }
+
+    public List<Discount> getNonCumulativeDiscounts(List<Discount> discounts) {
+        return discounts.stream().filter(discount -> !discount.isCumulative()).collect(Collectors.toList());
+    }
+
+    public double sumDiscounts(List<Discount> discounts, List<Product> products, PaymentType paymentType) {
+        return discounts.stream().reduce(
+                0.0,
+                (subtotal, discount) -> subtotal + discount.calculate(products, paymentType),
+                Double::sum
+        );
     }
 }

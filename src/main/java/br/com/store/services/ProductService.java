@@ -42,4 +42,8 @@ public class ProductService {
     public boolean has(Long id) {
         return repository.findById(id).isPresent();
     }
+
+    public static double calcTotalCost(List<Product> products) {
+        return products.stream().reduce(0.0, (subtotal, product) -> subtotal + product.getPrice(), Double::sum);
+    }
 }
