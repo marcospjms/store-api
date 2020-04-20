@@ -1,23 +1,22 @@
 package br.com.store.services;
 
-import static org.junit.Assert.*;
 
 import br.com.store.model.Product;
 import br.com.store.model.ShoppingCart;
 import br.com.store.model.ShoppingCartProduct;
 import br.com.store.model.auth.StoreUser;
 import br.com.store.repositories.*;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
 import static org.mockito.Mockito.when;
 
-import org.mockito.junit.MockitoJUnitRunner;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public class ShoppingCartServiceTest {
 
     @Mock
