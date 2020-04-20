@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -72,6 +73,12 @@ public class ShoppingCartService {
         return shoppingCartProductRepository.save(shoppingCartProduct);
     }
 
+    public List<Product> findProductsByUsername(Pageable pageable, String username) {
+        StoreUser customer = this.userService.findByUsername(username);
+        return this.shoppingCartProductRepository.findByStoreUserId(pageable, customer.getId())
+                .stream().map(scp -> scp.getProduct()).collect(Collectors.toList());
+    }
+
     public ShoppingCartDiscount addDiscount(String username, Long discountId) {
         StoreUser customer = this.userService.findByUsername(username);
         Discount discount = this.discountService.findById(discountId);
@@ -80,6 +87,12 @@ public class ShoppingCartService {
         shoppingCartDiscount.setDiscount(discount);
         shoppingCartDiscount.setShoppingCart(shoppingCart);
         return shoppingCartDiscountRepository.save(shoppingCartDiscount);
+    }
+
+    public List<Discount> findDiscountByUsername(Pageable pageable, String username) {
+        StoreUser customer = this.userService.findByUsername(username);
+        return this.shoppingCartDiscountRepository.findByStoreUserId(pageable, customer.getId())
+                .stream().map(scp -> scp.getDiscount()).collect(Collectors.toList());
     }
 
     public boolean has(Long id) {

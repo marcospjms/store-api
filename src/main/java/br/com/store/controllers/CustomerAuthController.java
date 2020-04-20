@@ -1,16 +1,21 @@
 package br.com.store.controllers;
 
+import br.com.store.model.Discount;
+import br.com.store.model.Product;
 import br.com.store.model.ShoppingCartDiscount;
 import br.com.store.model.ShoppingCartProduct;
 import br.com.store.model.auth.StoreUser;
 import br.com.store.services.ShoppingCartService;
 import br.com.store.services.StoreUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/auth/users")
@@ -47,9 +52,27 @@ public class CustomerAuthController {
         return new ResponseEntity<>(this.shoppingCartService.addProduct(userDetails.getUsername(), productId), HttpStatus.OK);
     }
 
+    @GetMapping(value = "products")
+    public ResponseEntity<List<Product>> getShoppingCartProducts(Pageable pageable,
+                                                                 @AuthenticationPrincipal UserDetails userDetails) {
+        return new ResponseEntity<>(
+                this.shoppingCartService.findProductsByUsername(pageable, userDetails.getUsername()),
+                HttpStatus.OK
+        );
+    }
+
     @PostMapping(value = "discounts")
     public ResponseEntity<ShoppingCartDiscount> addDiscount(@AuthenticationPrincipal UserDetails userDetails,
                                                            @RequestParam(value = "discountId") Long discountId) {
         return new ResponseEntity<>(this.shoppingCartService.addDiscount(userDetails.getUsername(), discountId), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "dicounts")
+    public ResponseEntity<List<Discount>> getShoppingCartDiscounts(Pageable pageable,
+                                                                   @AuthenticationPrincipal UserDetails userDetails) {
+        return new ResponseEntity<>(
+                this.shoppingCartService.findDiscountByUsername(pageable, userDetails.getUsername()),
+                HttpStatus.OK
+        );
     }
 }
