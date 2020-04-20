@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +34,9 @@ public class Discount extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private DiscountType type;
 
+    @Column(columnDefinition = "boolean default 'ALL'")
     @Enumerated(EnumType.STRING)
-    private PaymentType paymentTypes;
+    private PaymentType paymentType;
 
     @ManyToOne
     private Category category;
@@ -56,43 +58,59 @@ public class Discount extends AbstractEntity {
 
     public void setDiscountRate(double discountRate) {
         if (this.type == null) {
-            throw new RuntimeException("Impossível definir a taxa de desconto: sem nenhum type definido");
+            throw new RuntimeException("Taxa de desconto inválida: sem nenhum type definido");
         }
-        this.checkDiscountRate(discountRate);
+        if (this.type == DiscountType.RELATIVE && (discountRate < 0 || discountRate > 1)) {
+            throw new RuntimeException("Taxa de desconto inválida: com type RELATIVE o valor deve ser entre 0 e 1");
+        }
+        if (!Arrays.asList(DiscountType.ABSOLUTE, DiscountType.RELATIVE).contains(this.type)) {
+            throw new RuntimeException("Taxa de desconto inválida: type desconhecido");
+        }
         this.discountRate = discountRate;
     }
 
     public double calculate(List<Product> products, PaymentType paymentType) {
-        return this.filterProducts(products).stream().reduce(
+        if (paymentType != this.paymentType && this.paymentType != PaymentType.ALL) {
+            return 0.0;
+        }
+        return this.getValidProducts(products).stream().reduce(
                 0.0,
-                (subtotal, product) -> subtotal + this.calcDiscountByProduct(product, paymentType),
+                (subtotal, product) -> subtotal + product.getPrice(),
                 Double::sum
         );
     }
 
-    private void checkDiscountRate(double discountRate) {
-        switch (this.type) {
-            case ABSOLUTE:
-                break;
-            case RELATIVE:
-                if (discountRate < 0 || discountRate > 1) {
-                    throw new RuntimeException("Impossível definir a taxa de desconto: type RELATIVE só " +
-                            "permite valor entre 0 e 1");
-                }
-                break;
-            default:
-                throw new RuntimeException("Impossível definir a taxa de desconto: type desconhecido");
-        }
+    private List<Product> getValidProducts(List<Product> products) {
+        return products.stream().filter(product -> this.isValidProduct(product)).collect(Collectors.toList());
     }
 
-    private List<Product> filterProducts(List<Product> products) {
-        if (this.category == null) {
-            return products;
-        }
-        return products.stream().filter((product -> this.category.equals(product.getCategory()))).collect(Collectors.toList());
+    private boolean isValidProduct(Product product) {
+        return this.category == null || this.category.equals(product.getCategory());
     }
 
-    private double calcDiscountByProduct(Product product, PaymentType paymentType) {
-        return product.getPrice();
+    public static List<Discount> getBestDiscountsByProducts(List<Discount> discounts, List<Product> products, PaymentType paymentType) {
+        List<Discount> cumulativeDiscounts = getCumulativeDiscounts(discounts);
+        List<Discount> nonCumulativeDiscounts = getNonCumulativeDiscounts(discounts);
+
+        Double totalCumulativeDiscount = calcTotalDiscounts(cumulativeDiscounts, products, paymentType);
+        Double totalNonCumulativeDiscount = calcTotalDiscounts(nonCumulativeDiscounts, products, paymentType);
+
+        return totalCumulativeDiscount > totalNonCumulativeDiscount ? cumulativeDiscounts : nonCumulativeDiscounts;
+    }
+
+    private static List<Discount> getCumulativeDiscounts(List<Discount> discounts) {
+        return discounts.stream().filter(discount -> discount.cumulative).collect(Collectors.toList());
+    }
+
+    private static List<Discount> getNonCumulativeDiscounts(List<Discount> discounts) {
+        return discounts.stream().filter(discount -> !discount.cumulative).collect(Collectors.toList());
+    }
+
+    public static double calcTotalDiscounts(List<Discount> discounts, List<Product> products, PaymentType paymentType) {
+        return discounts.stream().reduce(
+                0.0,
+                (subtotal, discount) -> subtotal + discount.calculate(products, paymentType),
+                Double::sum
+        );
     }
 }
