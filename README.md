@@ -42,4 +42,13 @@ Com o projeto em execução, será possível visualizar a api a partir:
 * http://localhost:8080/swagger-ui.html
 
 # Considerações sobre o desenvolvimento #
-Evitei armazenar listas como atributos do modelo para facilitar a paginação. Por isso criei classes como **ShoppingCartDiscount** e **ShoppingCartProduct**, em vez de armazenar informações sobre o produto e descontos dentro do **ShoppingCart**
+
+## Design ##
+
+Evitei armazenar listas como atributos do modelo para facilitar a paginação. Por isso criei classes como **ShoppingCartDiscount** e **ShoppingCartProduct**, em vez de armazenar informações sobre os produtos e descontos dentro do **ShoppingCart**.
+
+## Testes ##
+
+Tentei abranger os testes unitários de serviços e os dos controllers. Nesse último realizei requisições no ambiente de teste para verificar se as requisições estavam funcionando corretamente. 
+
+Porém, devido ao tempo, não criei todos os testes possíveis. 
