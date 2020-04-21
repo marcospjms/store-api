@@ -44,6 +44,7 @@ public class UtilTestService {
     public Discount categorizedRelativeDiscount;
 
     public Discount nonCumulativeDiscount;
+    public Discount smallerNonCumulativeDiscount;
 
     @PostConstruct
     public void setup() {
@@ -161,6 +162,18 @@ public class UtilTestService {
                         .code("cupomnaocumulativo")
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(100)
+                        .cumulative(false)
+                        .start(DateTime.now().minusDays(1))
+                        .end(DateTime.now().plusDays(1))
+                        .build()
+        );
+
+        this.smallerNonCumulativeDiscount = this.discountService.save(
+                Discount.builder()
+                        .description("Outro desconto não cumulativo")
+                        .code("cupomnaocumulativooutro")
+                        .type(DiscountType.ABSOLUTE)
+                        .discountRate(20)
                         .cumulative(false)
                         .start(DateTime.now().minusDays(1))
                         .end(DateTime.now().plusDays(1))

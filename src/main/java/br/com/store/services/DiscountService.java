@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,7 +64,7 @@ public class DiscountService {
 
     public List<Discount> getAppliedDiscounts(List<Discount> discounts, List<Product> products, PaymentType paymentType) {
         List<Discount> cumulativeDiscounts = getCumulativeDiscounts(discounts);
-        List<Discount> nonCumulativeDiscounts = getNonCumulativeDiscounts(discounts);
+        List<Discount> nonCumulativeDiscounts = getNonCumulativeDiscounts(discounts, products, paymentType);
 
         Double totalCumulativeDiscount = sumDiscounts(cumulativeDiscounts, products, paymentType);
         Double totalNonCumulativeDiscount = sumDiscounts(nonCumulativeDiscounts, products, paymentType);
@@ -74,8 +76,12 @@ public class DiscountService {
         return discounts.stream().filter(discount -> discount.isCumulative()).collect(Collectors.toList());
     }
 
-    public List<Discount> getNonCumulativeDiscounts(List<Discount> discounts) {
-        return discounts.stream().filter(discount -> !discount.isCumulative()).collect(Collectors.toList());
+    public List<Discount> getNonCumulativeDiscounts(List<Discount> discounts, List<Product> products, PaymentType paymentType) {
+        Discount selectedDiscount = discounts.stream()
+                .filter(discount -> !discount.isCumulative())
+                .max((discount1, discount2) -> (int)(discount1.calculate(products, paymentType) - discount2.calculate(products, paymentType)))
+                .orElse(null);
+        return selectedDiscount != null ? Arrays.asList(selectedDiscount) : Collections.EMPTY_LIST;
     }
 
     public double sumDiscounts(List<Discount> discounts, List<Product> products, PaymentType paymentType) {

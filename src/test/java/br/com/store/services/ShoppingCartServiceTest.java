@@ -24,12 +24,17 @@ public class ShoppingCartServiceTest {
     private StoreUser customer;
     private Product categorizedProduct;
     private Product product;
+
     private Discount absoluteDiscount;
     private Discount categorizedAbsoluteDiscount;
     private Discount bigAbsoluteDiscount;
+
     private Discount relativeDiscount;
     private Discount otherRelativeDiscount;
     private Discount categorizedRelativeDiscount;
+
+    public Discount nonCumulativeDiscount;
+    public Discount smallerNonCumulativeDiscount;
 
     @Autowired
     private UtilTestService utilTestService;
@@ -48,6 +53,8 @@ public class ShoppingCartServiceTest {
         this.relativeDiscount = this.utilTestService.relativeDiscount;
         this.otherRelativeDiscount = this.utilTestService.otherRelativeDiscount;
         this.categorizedRelativeDiscount = this.utilTestService.categorizedRelativeDiscount;
+        this.nonCumulativeDiscount = this.utilTestService.nonCumulativeDiscount;
+        this.smallerNonCumulativeDiscount = this.utilTestService.smallerNonCumulativeDiscount;
     }
 
     /**
@@ -150,6 +157,26 @@ public class ShoppingCartServiceTest {
         this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.categorizedRelativeDiscount.getCode());
         double expected = product.getPrice() + categorizedProduct.getPrice() * (1 - this.categorizedRelativeDiscount.getDiscountRate());
+        assertEquals(expected, shoppingCart.getComputedCost());
+    }
+
+    @Test
+    public void addNonCumulativeDiscountsTest() {
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.nonCumulativeDiscount.getCode());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.smallerNonCumulativeDiscount.getCode());
+        double expected = product.getPrice() + categorizedProduct.getPrice() - this.nonCumulativeDiscount.getDiscountRate();
+        assertEquals(expected, shoppingCart.getComputedCost());
+    }
+
+    @Test
+    public void addNonAndCumulativeDiscountTest() {
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.nonCumulativeDiscount.getCode());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount.getCode());
+        double expected = product.getPrice() + categorizedProduct.getPrice() - this.nonCumulativeDiscount.getDiscountRate();
         assertEquals(expected, shoppingCart.getComputedCost());
     }
 }
