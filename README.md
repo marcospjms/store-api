@@ -1,16 +1,30 @@
 # Configuração inicial #
 ## Banco de dados ##
+
 Para executar é necessário atualizar o application.properties. A seguinte propriedade deve ser atualizada para o arquivo que ficará seu banco de dados:
 
 * spring.datasource.url=jdbc:h2:file:///home/marcos/testdb
 
 ## Criar usuário inicial ##
-Como o sistema foi construído usando spring boot security, para conseguir requisitar alguns recursos será necessário criar um usuário. Basta enviar um post para seguinte url:
-* http://localhost:8080/public/users/
-Deverá ser enviado um json com o username, password, nome e email. Se for do interesse criar um admin, enviar a mesma requisição para:
-* http://localhost:8080/public/users/admin
-Essa url foi criada para facilitar a criação de usuário admin para fins de teste.
 
+Como o sistema foi construído usando spring boot security, para conseguir requisitar alguns recursos será necessário criar um usuário. Basta enviar um post para seguinte url:
+
+* http://localhost:8080/api/public/users/
+
+Deverá ser enviado um json com o username, password, name e email. Se for do interesse criar um admin, enviar a mesma requisição para:
+
+* http://localhost:8080/api/public/users/admin
+
+Essa url serve para facilitar a criação de usuário admin para fins de teste. Exemplos dessas requisições podem ser vistas na classe de teste **CustomerPublicControllerTest**.
+
+## Realizar login ##
+
+Para realizar o login, basta enviar um post com username e password em formato json para url:
+
+* http://localhost:8080/login
+ 
+Com isso, um token será enviado. Nas requisições futuras deverá ser configurado o header Authentication com o "Bearer + token gerado"
+ 
 # Passos para execução #
     
 1. Criar pacote:
