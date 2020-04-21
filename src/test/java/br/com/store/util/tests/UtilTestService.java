@@ -29,11 +29,12 @@ public class UtilTestService {
     private ShoppingCartService shoppingCartService;
 
     public StoreUser customer;
-    public Category category;
+    public Category category1;
     public Product product1;
     public Product product2;
     public Discount absoluteDiscount1;
-    public Discount absoluteDiscount2;
+    public Discount absoluteDiscount2ofCategory1;
+    public Discount absoluteDiscount3;
 
     @PostConstruct
     public void setup() {
@@ -47,7 +48,7 @@ public class UtilTestService {
                 false
         );
 
-        this.category = this.categoryService.save(
+        this.category1 = this.categoryService.save(
                 Category.builder()
                         .name("Categoria 1")
                         .description("Descrição da categoria 1")
@@ -59,7 +60,7 @@ public class UtilTestService {
                         .name("Produto 1")
                         .description("Descrição do produto 1")
                         .price(50)
-                        .category(this.category)
+                        .category(this.category1)
                         .build()
         );
 
@@ -73,22 +74,36 @@ public class UtilTestService {
 
         this.absoluteDiscount1 = this.discountService.save(
                 Discount.builder()
-                        .description("Desconto cumulativo 1")
-                        .code("cupomdoido")
+                        .description("Desconto cumulativo 2")
+                        .code("cupomdoido1")
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(50)
-                        .category(this.category)
+                        .cumulative(true)
                         .start(DateTime.now().minusDays(1))
                         .end(DateTime.now().plusDays(1))
                         .build()
         );
 
-        this.absoluteDiscount2 = this.discountService.save(
+        this.absoluteDiscount2ofCategory1 = this.discountService.save(
                 Discount.builder()
-                        .description("Desconto cumulativo 2")
+                        .description("Desconto cumulativo 1")
                         .code("cupomdoido2")
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(50)
+                        .cumulative(true)
+                        .category(this.category1)
+                        .start(DateTime.now().minusDays(1))
+                        .end(DateTime.now().plusDays(1))
+                        .build()
+        );
+
+        this.absoluteDiscount3 = this.discountService.save(
+                Discount.builder()
+                        .description("Desconto cumulativo 3")
+                        .code("cupomdoido3")
+                        .type(DiscountType.ABSOLUTE)
+                        .discountRate(Double.MAX_VALUE)
+                        .cumulative(true)
                         .start(DateTime.now().minusDays(1))
                         .end(DateTime.now().plusDays(1))
                         .build()
