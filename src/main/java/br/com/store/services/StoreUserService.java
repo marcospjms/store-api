@@ -29,7 +29,6 @@ public class StoreUserService {
             }
         }});
         storeUser.setPassword(this.encoder.encode(storeUser.getPassword()));
-        AbstractEntityUtil.normalizeEntity(storeUser);
         repository.save(storeUser);
         storeUser.setPassword(null);
         return storeUser;
@@ -56,8 +55,7 @@ public class StoreUserService {
     }
 
     public StoreUser save(StoreUser storeUser) {
-        AbstractEntityUtil.normalizeEntity(storeUser);
-        return AbstractEntityUtil.save(this.repository, storeUser);
+        return this.repository.save(storeUser);
     }
 
     public boolean delete(Long idUsuario) {

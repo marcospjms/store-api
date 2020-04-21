@@ -8,10 +8,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public class AbstractEntityUtil {
 
-    public static void normalizeEntity(AbstractEntity entity) {
-        entity.setNormalizedName(normalizeText(entity.getName()));
-    }
-
     public static String normalizeText(String text) {
         return StringUtils.stripAccents(text == null ? "" : text).toLowerCase();
     }
@@ -26,14 +22,7 @@ public class AbstractEntityUtil {
         }
 
         entity.setVisible(null);
-        entity.setName(query);
-        entity.setNormalizedName(query);
 
         return Example.of(entity, matcher);
-    }
-
-    public static <E extends AbstractEntity> E save(CrudRepository<E, Long> crudRepository, E entity) {
-        AbstractEntityUtil.normalizeEntity(entity);
-        return crudRepository.save(entity);
     }
 }

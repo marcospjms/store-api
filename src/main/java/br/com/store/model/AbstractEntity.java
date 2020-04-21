@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
@@ -16,16 +17,12 @@ import java.util.Objects;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuperBuilder
 public abstract class AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     protected Long id;
 
-    @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private String normalizedName;
     /**
      * Indica se a entidade vai ser visível para usuário que não seja admin
      */

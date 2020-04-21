@@ -36,7 +36,7 @@ public class ShoppingCartService {
     private ShoppingCartDiscountRepository shoppingCartDiscountRepository;
 
     public ShoppingCart save(ShoppingCart shoppingCart) {
-        return AbstractEntityUtil.save(this.repository, shoppingCart);
+        return this.repository.save(shoppingCart);
     }
 
     public boolean delete(Long id) {
@@ -75,7 +75,7 @@ public class ShoppingCartService {
         }
     }
 
-    public ShoppingCartProduct addProduct(String username, Long productId) {
+    public ShoppingCart addProduct(String username, Long productId) {
         StoreUser customer = this.userService.findByUsername(username);
         Product product = this.productService.findById(productId);
         ShoppingCart shoppingCart = this.findByStoreUser(customer);
@@ -83,11 +83,10 @@ public class ShoppingCartService {
         shoppingCartProduct.setProduct(product);
         shoppingCartProduct.setShoppingCart(shoppingCart);
         shoppingCartProduct = shoppingCartProductRepository.save(shoppingCartProduct);
-        this.updateShoppingCart(username);
-        return shoppingCartProduct;
+        return this.updateShoppingCart(username);
     }
 
-    public ShoppingCartDiscount addDiscount(String username, String discountCode) {
+    public ShoppingCart addDiscount(String username, String discountCode) {
         Discount discount = this.discountService.findValidByCode(discountCode);
         if (discount == null) {
             throw new RuntimeException("Código inválido");
@@ -97,12 +96,11 @@ public class ShoppingCartService {
         ShoppingCartDiscount shoppingCartDiscount = new ShoppingCartDiscount();
         shoppingCartDiscount.setDiscount(discount);
         shoppingCartDiscount.setShoppingCart(shoppingCart);
-        shoppingCartDiscount= shoppingCartDiscountRepository.save(shoppingCartDiscount);
-        this.updateShoppingCart(username);
-        return shoppingCartDiscount;
+        shoppingCartDiscountRepository.save(shoppingCartDiscount);
+        return this.updateShoppingCart(username);
     }
 
-    public void updateShoppingCart(String username) {
+    public ShoppingCart updateShoppingCart(String username) {
         StoreUser customer = this.userService.findByUsername(username);
         ShoppingCart shoppingCart = this.findByStoreUser(customer);
         List<Product> products = this.findAllProductsByUsername(username);
@@ -111,7 +109,7 @@ public class ShoppingCartService {
         shoppingCart.setDiscount(this.discountService.calcDiscount(discounts, products, shoppingCart.getPaymentType()));
         shoppingCart.setCost(this.productService.calcTotalCost(products));
 
-        this.save(shoppingCart);
+        return this.save(shoppingCart);
     }
 
     public List<Product> findProductsByUsername(Pageable pageable, String username) {

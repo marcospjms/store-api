@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuperBuilder
 public class Discount extends AbstractEntity {
 
     @Column(nullable = false)
@@ -57,10 +59,13 @@ public class Discount extends AbstractEntity {
     private long maxCounter;
 
     public void setDiscountRate(double discountRate) {
+        if (discountRate < 0) {
+            throw new RuntimeException("Taxa de desconto inválida: não pode ser menor que zero");
+        }
         if (this.type == null) {
             throw new RuntimeException("Taxa de desconto inválida: sem nenhum type definido");
         }
-        if (this.type == DiscountType.RELATIVE && (discountRate < 0 || discountRate > 1)) {
+        if (this.type == DiscountType.RELATIVE && discountRate > 1) {
             throw new RuntimeException("Taxa de desconto inválida: com type RELATIVE o valor deve ser entre 0 e 1");
         }
         if (!Arrays.asList(DiscountType.ABSOLUTE, DiscountType.RELATIVE).contains(this.type)) {

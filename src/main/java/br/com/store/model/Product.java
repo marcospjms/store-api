@@ -3,18 +3,19 @@ package br.com.store.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.List;
 
 @Entity
 @Table(name = "products")
 @Getter
 @Setter
 @NoArgsConstructor
+@SuperBuilder
 public class Product extends AbstractEntity {
 
     @ManyToOne
@@ -23,6 +24,9 @@ public class Product extends AbstractEntity {
     private double price;
 
     private double totalDiscount;
+
+    @Column(nullable = false)
+    private String name;
 
     @Column(nullable = false)
     private String description;

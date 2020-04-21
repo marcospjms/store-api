@@ -17,7 +17,7 @@ public class ProductService {
     private ProductRepository repository;
 
     public Product save(Product product) {
-        return AbstractEntityUtil.save(this.repository, product);
+        return this.repository.save(product);
     }
 
     public boolean delete(Long id) {

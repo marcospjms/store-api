@@ -1,9 +1,6 @@
 package br.com.store.controllers;
 
-import br.com.store.model.Discount;
-import br.com.store.model.Product;
-import br.com.store.model.ShoppingCartDiscount;
-import br.com.store.model.ShoppingCartProduct;
+import br.com.store.model.*;
 import br.com.store.model.auth.StoreUser;
 import br.com.store.services.ShoppingCartService;
 import br.com.store.services.StoreUserService;
@@ -47,8 +44,8 @@ public class CustomerAuthController {
     }
 
     @PostMapping(value = "products")
-    public ResponseEntity<ShoppingCartProduct> addProduct(@AuthenticationPrincipal UserDetails userDetails,
-                                                          @RequestParam(value = "productId") Long productId) {
+    public ResponseEntity<ShoppingCart> addProduct(@AuthenticationPrincipal UserDetails userDetails,
+                                                   @RequestParam(value = "productId") Long productId) {
         return new ResponseEntity<>(this.shoppingCartService.addProduct(userDetails.getUsername(), productId), HttpStatus.OK);
     }
 
@@ -62,7 +59,7 @@ public class CustomerAuthController {
     }
 
     @PostMapping(value = "discounts")
-    public ResponseEntity<ShoppingCartDiscount> addDiscount(@AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<ShoppingCart> addDiscount(@AuthenticationPrincipal UserDetails userDetails,
                                                            @RequestParam(value = "discountCode") String discountCode) {
         return new ResponseEntity<>(this.shoppingCartService.addDiscount(userDetails.getUsername(), discountCode), HttpStatus.OK);
     }

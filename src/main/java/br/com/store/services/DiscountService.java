@@ -21,7 +21,7 @@ public class DiscountService {
     private DiscountRepository repository;
 
     public Discount save(Discount discount) {
-        return AbstractEntityUtil.save(this.repository, discount);
+        return this.repository.save(discount);
     }
 
     public boolean delete(Long id) {

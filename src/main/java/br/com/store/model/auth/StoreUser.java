@@ -1,11 +1,11 @@
 package br.com.store.model.auth;
 
 import br.com.store.model.AbstractEntity;
-import br.com.store.model.ShoppingCart;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -18,7 +18,11 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @NoArgsConstructor
+@SuperBuilder
 public class StoreUser extends AbstractEntity {
+
+    @Column(nullable = false)
+    private String name;
 
     @NotEmpty
     @Column(unique = true)

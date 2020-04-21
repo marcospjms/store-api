@@ -17,7 +17,7 @@ public class CategoryService {
     private CategoryRepository repository;
 
     public Category save(Category category) {
-        return AbstractEntityUtil.save(this.repository, category);
+        return this.repository.save(category);
     }
 
     public boolean delete(Long id) {

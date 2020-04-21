@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "shopping_carts")
@@ -22,6 +21,6 @@ public class ShoppingCart extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
 
-    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @OneToOne(optional = false)
     private StoreUser storeUser;
 }
