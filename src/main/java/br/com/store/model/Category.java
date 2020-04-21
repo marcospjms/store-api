@@ -3,6 +3,7 @@ package br.com.store.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Column;
@@ -15,6 +16,7 @@ import javax.persistence.Table;
 @Setter
 @NoArgsConstructor
 @SuperBuilder
+@ToString
 public class Category extends AbstractEntity {
 
     @Column(nullable = false)

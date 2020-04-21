@@ -28,6 +28,7 @@ public class UtilTestService {
     @Autowired
     private ShoppingCartService shoppingCartService;
 
+    public StoreUser adminUser;
     public StoreUser customer;
 
     public Category category;
@@ -48,6 +49,16 @@ public class UtilTestService {
 
     @PostConstruct
     public void setup() {
+        this.adminUser = this.storeUserService.createUser(
+                StoreUser.builder()
+                        .name("Paulo José")
+                        .email("marcospjms@google.com")
+                        .username("marcospjmsadmin")
+                        .password("123456")
+                        .build(),
+                true
+        );
+        this.adminUser = this.storeUserService.findById(this.adminUser.getId()); // para ficar com o password na memória
         this.customer = this.storeUserService.createUser(
                 StoreUser.builder()
                         .name("Marcos Paulo")
@@ -57,6 +68,7 @@ public class UtilTestService {
                         .build(),
                 false
         );
+        this.customer = this.storeUserService.findById(this.customer.getId());
 
         this.category = this.categoryService.save(
                 Category.builder()

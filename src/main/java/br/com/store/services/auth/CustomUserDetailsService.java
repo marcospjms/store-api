@@ -18,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private StoreUserService storeUserService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public StoreUserSpring loadUserByUsername(String username) throws UsernameNotFoundException {
         StoreUser user = Optional.ofNullable(this.storeUserService.findByUsername(username))
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return new StoreUserSpring(user);
