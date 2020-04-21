@@ -27,7 +27,7 @@ public abstract class AbstractEntity {
      * Indica se a entidade vai ser visível para usuário que não seja admin
      */
     @Column(columnDefinition = "boolean default true")
-    private Boolean visible = true;
+    private Boolean visible;
 
     @JsonSerialize(using = DateTimeSerializer.class)
     @JsonDeserialize(using = DateTimeDeserializer.class)

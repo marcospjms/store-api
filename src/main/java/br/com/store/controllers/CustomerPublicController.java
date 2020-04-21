@@ -23,7 +23,6 @@ public class CustomerPublicController {
 
     @PostMapping(value = "")
     public ResponseEntity<StoreUser> createStoreUser(@RequestBody StoreUser storeUser) {
-        System.out.println(">>>>>>>>>>>>>>>> 1");
         return new ResponseEntity<>(this.userService.createUser(storeUser, false), HttpStatus.OK);
     }
 
