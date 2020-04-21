@@ -32,12 +32,12 @@ public class UtilTestService {
     public Category category1;
     public Product product1;
     public Product product2;
-    public Discount absoluteDiscount1;
-    public Discount absoluteDiscount2ofCategory1;
-    public Discount absoluteDiscount3;
+    public Discount absoluteDiscount;
+    public Discount bigAbsoluteDiscount;
+    public Discount categorizedAbsoluteDiscount;
 
-    public Discount relativeDiscount1;
-    public Discount relativeDiscount2;
+    public Discount relativeDiscount;
+    public Discount otherRelativeDiscount;
 
     @PostConstruct
     public void setup() {
@@ -75,10 +75,10 @@ public class UtilTestService {
                         .build()
         );
 
-        this.absoluteDiscount1 = this.discountService.save(
+        this.absoluteDiscount = this.discountService.save(
                 Discount.builder()
-                        .description("Desconto abosulto 1")
-                        .code("cupomabsoluto1")
+                        .description("Desconto abosulto")
+                        .code("cupomabsoluto")
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(50)
                         .cumulative(true)
@@ -87,10 +87,10 @@ public class UtilTestService {
                         .build()
         );
 
-        this.absoluteDiscount2ofCategory1 = this.discountService.save(
+        this.categorizedAbsoluteDiscount = this.discountService.save(
                 Discount.builder()
-                        .description("Desconto abosulto 2")
-                        .code("cupomabsoluto2")
+                        .description("Desconto abosulto categorizado")
+                        .code("cupomabsolutocategorizado")
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(50)
                         .cumulative(true)
@@ -100,10 +100,10 @@ public class UtilTestService {
                         .build()
         );
 
-        this.absoluteDiscount3 = this.discountService.save(
+        this.bigAbsoluteDiscount = this.discountService.save(
                 Discount.builder()
-                        .description("Desconto abosulto 3")
-                        .code("cupomabsoluto3")
+                        .description("Desconto abosulto com grande valor")
+                        .code("cupomabsolutogrande")
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(Double.MAX_VALUE)
                         .cumulative(true)
@@ -112,12 +112,24 @@ public class UtilTestService {
                         .build()
         );
 
-        this.relativeDiscount1 = this.discountService.save(
+        this.relativeDiscount = this.discountService.save(
                 Discount.builder()
-                        .description("Desconto relativo 1")
-                        .code("cupomrelativo1")
+                        .description("Desconto relativo")
+                        .code("cupomrelativo")
                         .type(DiscountType.RELATIVE)
                         .discountRate(0.5)
+                        .cumulative(true)
+                        .start(DateTime.now().minusDays(1))
+                        .end(DateTime.now().plusDays(1))
+                        .build()
+        );
+
+        this.otherRelativeDiscount = this.discountService.save(
+                Discount.builder()
+                        .description("Desconto relativo alternativo")
+                        .code("cupomrelativooutro")
+                        .type(DiscountType.RELATIVE)
+                        .discountRate(0.2)
                         .cumulative(true)
                         .start(DateTime.now().minusDays(1))
                         .end(DateTime.now().plusDays(1))

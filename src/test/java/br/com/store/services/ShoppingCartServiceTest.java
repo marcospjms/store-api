@@ -26,10 +26,11 @@ public class ShoppingCartServiceTest {
     private Category category;
     private Product product1;
     private Product product2;
-    private Discount absoluteDiscount1;
-    private Discount absoluteDiscount2ofCategory1;
-    private Discount absoluteDiscount3;
-    private Discount relativeDiscount1;
+    private Discount absoluteDiscount;
+    private Discount categorizedAbsoluteDiscount;
+    private Discount bigAbsoluteDiscount;
+    private Discount relativeDiscount;
+    private Discount otherRelativeDiscount;
 
     @Autowired
     private UtilTestService utilTestService;
@@ -43,10 +44,11 @@ public class ShoppingCartServiceTest {
         this.category = this.utilTestService.category1;
         this.product1 = this.utilTestService.product1;
         this.product2 = this.utilTestService.product2;
-        this.absoluteDiscount1 = this.utilTestService.absoluteDiscount1;
-        this.absoluteDiscount2ofCategory1 = this.utilTestService.absoluteDiscount2ofCategory1;
-        this.absoluteDiscount3 = this.utilTestService.absoluteDiscount3;
-        this.relativeDiscount1 = this.utilTestService.relativeDiscount1;
+        this.absoluteDiscount = this.utilTestService.absoluteDiscount;
+        this.bigAbsoluteDiscount = this.utilTestService.bigAbsoluteDiscount;
+        this.categorizedAbsoluteDiscount = this.utilTestService.categorizedAbsoluteDiscount;
+        this.relativeDiscount = this.utilTestService.relativeDiscount;
+        this.otherRelativeDiscount = this.utilTestService.otherRelativeDiscount;
     }
 
     /**
@@ -65,6 +67,7 @@ public class ShoppingCartServiceTest {
     public void addProduct2Test() {
         ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
         assertEquals(product2.getPrice(), shoppingCart.getCost());
+        assertEquals(product2.getPrice(), shoppingCart.getComputedCost());
     }
 
     /**
@@ -75,6 +78,7 @@ public class ShoppingCartServiceTest {
         ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
         this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
         assertEquals(product1.getPrice() + product2.getPrice(), shoppingCart.getCost());
+        assertEquals(product1.getPrice() + product2.getPrice(), shoppingCart.getComputedCost());
     }
 
 
@@ -82,41 +86,62 @@ public class ShoppingCartServiceTest {
      * Verifica se o desconto foi aplicado a todos produtos.
      */
     @Test
-    public void addProductsAndAbsoluteDiscount1Test() {
+    public void addAbsoluteDiscountTest() {
         ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
         this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
-        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount1.getCode());
-        assertEquals(product2.getPrice() + product1.getPrice(), shoppingCart.getCost());
-        assertEquals(product2.getPrice() + product1.getPrice() - this.absoluteDiscount1.getDiscountRate(), shoppingCart.getComputedCost());
-    }
-
-    /**
-     * Verifica se o desconto foi aplicado apenas aos produtos com a categoria "Categoria 1".
-     */
-    @Test
-    public void addProductsAndAbsoluteDiscount2ofCategory1Test() {
-        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
-        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
-        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount2ofCategory1.getCode());
-        assertEquals(product2.getPrice() + Math.max(0, product1.getPrice() - this.absoluteDiscount2ofCategory1.getDiscountRate()), shoppingCart.getComputedCost());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount.getCode());
+        assertEquals(product2.getPrice() + product1.getPrice() - this.absoluteDiscount.getDiscountRate(), shoppingCart.getComputedCost());
     }
 
     /**
      * Verifica se o desconto foi aplicado aos produtos e o valor do carrinho não ficou menor que zero.
      */
     @Test
-    public void addProductsAndAbsoluteDiscount3() {
+    public void addBigAbsoluteDiscountTest() {
         ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
         this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
-        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount3.getCode());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.bigAbsoluteDiscount.getCode());
         assertEquals(0, shoppingCart.getComputedCost());
     }
 
+    /**
+     * Verifica se o desconto foi aplicado apenas aos produtos com a categoria "Categoria 1".
+     */
     @Test
-    public void addProductsAndRelativeDiscount1() {
+    public void addCategorizedAbsoluteDiscountTest() {
         ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
         this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
-        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.relativeDiscount1.getCode());
-        assertEquals((product2.getPrice() + product1.getPrice()) * this.relativeDiscount1.getDiscountRate(), shoppingCart.getComputedCost());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.categorizedAbsoluteDiscount.getCode());
+        double expected = product2.getPrice() + Math.max(0, product1.getPrice() - this.categorizedAbsoluteDiscount.getDiscountRate());
+        assertEquals(expected, shoppingCart.getComputedCost());
+    }
+
+    @Test
+    public void addRelativeDiscountTest() {
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.relativeDiscount.getCode());
+        double expected = (product2.getPrice() + product1.getPrice()) * (1 - this.relativeDiscount.getDiscountRate());
+        assertEquals(expected, shoppingCart.getComputedCost());
+    }
+
+    @Test
+    public void addRelativeDiscountsTest() {
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.relativeDiscount.getCode());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.otherRelativeDiscount.getCode());
+        double expected = (product2.getPrice() + product1.getPrice()) * (1 - (this.otherRelativeDiscount.getDiscountRate() + this.relativeDiscount.getDiscountRate()));
+        assertEquals(expected, shoppingCart.getComputedCost(), 0.00000001);
+    }
+
+    @Test
+    public void addRelativeAndAbsoluteDiscountsTest() {
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.relativeDiscount.getCode());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount.getCode());
+        double expected = (product2.getPrice() + product1.getPrice()) * this.relativeDiscount.getDiscountRate() - this.absoluteDiscount.getDiscountRate();
+        assertEquals(expected, shoppingCart.getComputedCost());
     }
 }

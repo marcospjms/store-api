@@ -79,9 +79,8 @@ public class Discount extends AbstractEntity {
             return 0.0;
         }
         double totalPrice = Product.sumPrices(this.getValidProducts(products));
-        double discount = this.type == DiscountType.RELATIVE ? totalPrice * (1 - this.discountRate) : discountRate;
-        double totalCost= totalPrice - discount;
-
+        double discount = this.type == DiscountType.RELATIVE ? totalPrice * this.discountRate : discountRate;
+        double totalCost = totalPrice - discount;
         return  totalCost > 0 ? discount : totalPrice;
     }
 
