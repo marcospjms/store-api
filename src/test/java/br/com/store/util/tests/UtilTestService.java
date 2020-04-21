@@ -29,15 +29,21 @@ public class UtilTestService {
     private ShoppingCartService shoppingCartService;
 
     public StoreUser customer;
-    public Category category1;
-    public Product product1;
-    public Product product2;
+
+    public Category category;
+
+    public Product categorizedProduct;
+    public Product product;
+
     public Discount absoluteDiscount;
     public Discount bigAbsoluteDiscount;
     public Discount categorizedAbsoluteDiscount;
 
     public Discount relativeDiscount;
     public Discount otherRelativeDiscount;
+    public Discount categorizedRelativeDiscount;
+
+    public Discount nonCumulativeDiscount;
 
     @PostConstruct
     public void setup() {
@@ -51,23 +57,23 @@ public class UtilTestService {
                 false
         );
 
-        this.category1 = this.categoryService.save(
+        this.category = this.categoryService.save(
                 Category.builder()
-                        .name("Categoria 1")
-                        .description("Descrição da categoria 1")
+                        .name("Categoria")
+                        .description("Descrição da categoria")
                         .build()
         );
 
-        this.product1 = this.productService.save(
+        this.categorizedProduct = this.productService.save(
                 Product.builder()
                         .name("Produto 1")
                         .description("Descrição do produto 1")
                         .price(50)
-                        .category(this.category1)
+                        .category(this.category)
                         .build()
         );
 
-        this.product2 = this.productService.save(
+        this.product = this.productService.save(
                 Product.builder()
                         .name("Produto 2")
                         .description("Descrição do produto 2")
@@ -80,7 +86,7 @@ public class UtilTestService {
                         .description("Desconto abosulto")
                         .code("cupomabsoluto")
                         .type(DiscountType.ABSOLUTE)
-                        .discountRate(50)
+                        .discountRate(10)
                         .cumulative(true)
                         .start(DateTime.now().minusDays(1))
                         .end(DateTime.now().plusDays(1))
@@ -92,9 +98,9 @@ public class UtilTestService {
                         .description("Desconto abosulto categorizado")
                         .code("cupomabsolutocategorizado")
                         .type(DiscountType.ABSOLUTE)
-                        .discountRate(50)
+                        .discountRate(10)
                         .cumulative(true)
-                        .category(this.category1)
+                        .category(this.category)
                         .start(DateTime.now().minusDays(1))
                         .end(DateTime.now().plusDays(1))
                         .build()
@@ -131,6 +137,31 @@ public class UtilTestService {
                         .type(DiscountType.RELATIVE)
                         .discountRate(0.2)
                         .cumulative(true)
+                        .start(DateTime.now().minusDays(1))
+                        .end(DateTime.now().plusDays(1))
+                        .build()
+        );
+
+        this.categorizedRelativeDiscount = this.discountService.save(
+                Discount.builder()
+                        .description("Desconto relativo categorizado")
+                        .code("cupomrelativocategorizado")
+                        .category(this.category)
+                        .type(DiscountType.RELATIVE)
+                        .discountRate(0.1)
+                        .cumulative(true)
+                        .start(DateTime.now().minusDays(1))
+                        .end(DateTime.now().plusDays(1))
+                        .build()
+        );
+
+        this.nonCumulativeDiscount = this.discountService.save(
+                Discount.builder()
+                        .description("Desconto não cumulativo")
+                        .code("cupomnaocumulativo")
+                        .type(DiscountType.ABSOLUTE)
+                        .discountRate(100)
+                        .cumulative(false)
                         .start(DateTime.now().minusDays(1))
                         .end(DateTime.now().plusDays(1))
                         .build()

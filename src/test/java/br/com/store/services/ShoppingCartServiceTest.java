@@ -1,7 +1,6 @@
 package br.com.store.services;
 
 
-import br.com.store.model.Category;
 import br.com.store.model.Discount;
 import br.com.store.model.Product;
 import br.com.store.model.ShoppingCart;
@@ -23,14 +22,14 @@ import javax.transaction.Transactional;
 public class ShoppingCartServiceTest {
 
     private StoreUser customer;
-    private Category category;
-    private Product product1;
-    private Product product2;
+    private Product categorizedProduct;
+    private Product product;
     private Discount absoluteDiscount;
     private Discount categorizedAbsoluteDiscount;
     private Discount bigAbsoluteDiscount;
     private Discount relativeDiscount;
     private Discount otherRelativeDiscount;
+    private Discount categorizedRelativeDiscount;
 
     @Autowired
     private UtilTestService utilTestService;
@@ -41,33 +40,33 @@ public class ShoppingCartServiceTest {
     @BeforeEach
     public void setup() {
         this.customer = this.utilTestService.customer;
-        this.category = this.utilTestService.category1;
-        this.product1 = this.utilTestService.product1;
-        this.product2 = this.utilTestService.product2;
+        this.categorizedProduct = this.utilTestService.categorizedProduct;
+        this.product = this.utilTestService.product;
         this.absoluteDiscount = this.utilTestService.absoluteDiscount;
         this.bigAbsoluteDiscount = this.utilTestService.bigAbsoluteDiscount;
         this.categorizedAbsoluteDiscount = this.utilTestService.categorizedAbsoluteDiscount;
         this.relativeDiscount = this.utilTestService.relativeDiscount;
         this.otherRelativeDiscount = this.utilTestService.otherRelativeDiscount;
+        this.categorizedRelativeDiscount = this.utilTestService.categorizedRelativeDiscount;
     }
 
     /**
-     * Verifica se o product1 foi adicionado
+     * Verifica se o categorizedProduct foi adicionado
      */
     @Test
-    public void addProduct1Test() {
-        ShoppingCart shoppingCart = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
-        assertEquals(product1.getPrice(), shoppingCart.getCost());
+    public void addCategorizedProductTest() {
+        ShoppingCart shoppingCart = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        assertEquals(categorizedProduct.getPrice(), shoppingCart.getCost());
     }
 
     /**
-     * Verifica se o product2 foi adicionado
+     * Verifica se o product foi adicionado
      */
     @Test
-    public void addProduct2Test() {
-        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
-        assertEquals(product2.getPrice(), shoppingCart.getCost());
-        assertEquals(product2.getPrice(), shoppingCart.getComputedCost());
+    public void addProductTest() {
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
+        assertEquals(product.getPrice(), shoppingCart.getCost());
+        assertEquals(product.getPrice(), shoppingCart.getComputedCost());
     }
 
     /**
@@ -75,10 +74,10 @@ public class ShoppingCartServiceTest {
      */
     @Test
     public void addProductsTest() {
-        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
-        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
-        assertEquals(product1.getPrice() + product2.getPrice(), shoppingCart.getCost());
-        assertEquals(product1.getPrice() + product2.getPrice(), shoppingCart.getComputedCost());
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
+        assertEquals(categorizedProduct.getPrice() + product.getPrice(), shoppingCart.getCost());
+        assertEquals(categorizedProduct.getPrice() + product.getPrice(), shoppingCart.getComputedCost());
     }
 
 
@@ -87,10 +86,10 @@ public class ShoppingCartServiceTest {
      */
     @Test
     public void addAbsoluteDiscountTest() {
-        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
-        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount.getCode());
-        assertEquals(product2.getPrice() + product1.getPrice() - this.absoluteDiscount.getDiscountRate(), shoppingCart.getComputedCost());
+        assertEquals(product.getPrice() + categorizedProduct.getPrice() - this.absoluteDiscount.getDiscountRate(), shoppingCart.getComputedCost());
     }
 
     /**
@@ -98,8 +97,8 @@ public class ShoppingCartServiceTest {
      */
     @Test
     public void addBigAbsoluteDiscountTest() {
-        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
-        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.bigAbsoluteDiscount.getCode());
         assertEquals(0, shoppingCart.getComputedCost());
     }
@@ -109,39 +108,48 @@ public class ShoppingCartServiceTest {
      */
     @Test
     public void addCategorizedAbsoluteDiscountTest() {
-        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
-        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.categorizedAbsoluteDiscount.getCode());
-        double expected = product2.getPrice() + Math.max(0, product1.getPrice() - this.categorizedAbsoluteDiscount.getDiscountRate());
+        double expected = product.getPrice() + Math.max(0, categorizedProduct.getPrice() - this.categorizedAbsoluteDiscount.getDiscountRate());
         assertEquals(expected, shoppingCart.getComputedCost());
     }
 
     @Test
     public void addRelativeDiscountTest() {
-        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
-        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.relativeDiscount.getCode());
-        double expected = (product2.getPrice() + product1.getPrice()) * (1 - this.relativeDiscount.getDiscountRate());
+        double expected = (product.getPrice() + categorizedProduct.getPrice()) * (1 - this.relativeDiscount.getDiscountRate());
         assertEquals(expected, shoppingCart.getComputedCost());
     }
 
     @Test
     public void addRelativeDiscountsTest() {
-        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
-        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.relativeDiscount.getCode());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.otherRelativeDiscount.getCode());
-        double expected = (product2.getPrice() + product1.getPrice()) * (1 - (this.otherRelativeDiscount.getDiscountRate() + this.relativeDiscount.getDiscountRate()));
+        double expected = (product.getPrice() + categorizedProduct.getPrice()) * (1 - (this.otherRelativeDiscount.getDiscountRate() + this.relativeDiscount.getDiscountRate()));
         assertEquals(expected, shoppingCart.getComputedCost(), 0.00000001);
     }
 
     @Test
     public void addRelativeAndAbsoluteDiscountsTest() {
-        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
-        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.relativeDiscount.getCode());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount.getCode());
-        double expected = (product2.getPrice() + product1.getPrice()) * this.relativeDiscount.getDiscountRate() - this.absoluteDiscount.getDiscountRate();
+        double expected = (product.getPrice() + categorizedProduct.getPrice()) * this.relativeDiscount.getDiscountRate() - this.absoluteDiscount.getDiscountRate();
+        assertEquals(expected, shoppingCart.getComputedCost());
+    }
+
+    @Test
+    public void addCategorizedRelativeDiscountTest() {
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.categorizedProduct.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.categorizedRelativeDiscount.getCode());
+        double expected = product.getPrice() + categorizedProduct.getPrice() * (1 - this.categorizedRelativeDiscount.getDiscountRate());
         assertEquals(expected, shoppingCart.getComputedCost());
     }
 }

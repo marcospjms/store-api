@@ -45,7 +45,10 @@ public class DiscountService {
 
     public Discount findValidByCode(String code) {
         List<Discount> discounts = this.repository.findByCodeAndDate(code, DateTime.now());
-        return discounts != null && !discounts.isEmpty() ? discounts.get(0) : null;
+        if (discounts.size() > 1) {
+            throw new RuntimeException("Código de cupom inválido: dois descontos localizados");
+        }
+        return discounts.get(0);
     }
 
     public boolean has(Long id) {

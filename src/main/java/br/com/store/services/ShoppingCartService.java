@@ -89,7 +89,7 @@ public class ShoppingCartService {
     public ShoppingCart addDiscount(String username, String discountCode) {
         Discount discount = this.discountService.findValidByCode(discountCode);
         if (discount == null) {
-            throw new RuntimeException("Código inválido");
+            throw new RuntimeException("Código de cupom inválido: desconto não localizado");
         }
         StoreUser customer = this.userService.findByUsername(username);
         ShoppingCart shoppingCart = this.findByStoreUser(customer);
