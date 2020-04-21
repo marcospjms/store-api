@@ -40,3 +40,6 @@ Com isso, um token será enviado. Nas requisições futuras deverá ser configur
 # Visualizar a api #
 Com o projeto em execução, será possível visualizar a api a partir:
 * http://localhost:8080/swagger-ui.html
+
+# Considerações sobre o desenvolvimento #
+Evitei armazenar listas como atributos do modelo para facilitar a paginação. Por isso criei classes como **ShoppingCartDiscount** e **ShoppingCartProduct**, em vez de armazenar informações sobre o produto e descontos dentro do **ShoppingCart**
