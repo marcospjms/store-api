@@ -54,10 +54,6 @@ public class Discount extends AbstractEntity {
     @JsonDeserialize(using = DateTimeDeserializer.class)
     private DateTime end;
 
-    private long counter;
-
-    private long maxCounter;
-
     public void setDiscountRate(double discountRate) {
         if (discountRate < 0) {
             throw new RuntimeException("Taxa de desconto inválida: não pode ser menor que zero");

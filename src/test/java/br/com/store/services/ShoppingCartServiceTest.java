@@ -166,6 +166,7 @@ public class ShoppingCartServiceTest {
         this.shoppingCartService.addProduct(this.customer.getUsername(), this.product.getId());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.nonCumulativeDiscount.getCode());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.smallerNonCumulativeDiscount.getCode());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount.getCode());
         double expected = product.getPrice() + categorizedProduct.getPrice() - this.nonCumulativeDiscount.getDiscountRate();
         assertEquals(expected, shoppingCart.getComputedCost());
     }
