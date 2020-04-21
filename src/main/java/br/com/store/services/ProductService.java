@@ -44,6 +44,6 @@ public class ProductService {
     }
 
     public static double calcTotalCost(List<Product> products) {
-        return products.stream().reduce(0.0, (subtotal, product) -> subtotal + product.getPrice(), Double::sum);
+        return Product.sumPrices(products);
     }
 }

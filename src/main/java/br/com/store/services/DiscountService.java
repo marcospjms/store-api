@@ -63,10 +63,6 @@ public class DiscountService {
 
         Double totalCumulativeDiscount = sumDiscounts(cumulativeDiscounts, products, paymentType);
         Double totalNonCumulativeDiscount = sumDiscounts(nonCumulativeDiscounts, products, paymentType);
-        System.out.println("getApplied");
-        System.out.println(totalCumulativeDiscount);
-        System.out.println(totalNonCumulativeDiscount);
-        System.out.println("<<");
 
         return totalCumulativeDiscount > totalNonCumulativeDiscount ? cumulativeDiscounts : nonCumulativeDiscounts;
     }

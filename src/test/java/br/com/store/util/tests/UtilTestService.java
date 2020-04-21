@@ -33,10 +33,10 @@ public class UtilTestService {
     public Product product1;
     public Product product2;
     public Discount absoluteDiscount1;
+    public Discount absoluteDiscount2;
 
     @PostConstruct
     public void setup() {
-        System.out.println("executing...");
         this.customer = this.storeUserService.createUser(
                 StoreUser.builder()
                         .name("Marcos Paulo")
@@ -78,6 +78,17 @@ public class UtilTestService {
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(50)
                         .category(this.category)
+                        .start(DateTime.now().minusDays(1))
+                        .end(DateTime.now().plusDays(1))
+                        .build()
+        );
+
+        this.absoluteDiscount2 = this.discountService.save(
+                Discount.builder()
+                        .description("Desconto cumulativo 2")
+                        .code("cupomdoido2")
+                        .type(DiscountType.ABSOLUTE)
+                        .discountRate(50)
                         .start(DateTime.now().minusDays(1))
                         .end(DateTime.now().plusDays(1))
                         .build()

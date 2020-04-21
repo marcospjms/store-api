@@ -78,15 +78,10 @@ public class Discount extends AbstractEntity {
         if (paymentType != this.paymentType && this.paymentType != PaymentType.ALL) {
             return 0.0;
         }
-        return this.getValidProducts(products).stream().reduce(
-                0.0,
-                (subtotal, product) -> subtotal + product.getPrice(),
-                Double::sum
-        );
-    }
-
-    private double calculate(Product product) {
-        return Math.min(0, this.type == DiscountType.RELATIVE ? product.getPrice() * this.discountRate : product.getPrice() - discountRate);
+        double totalPrice = Product.sumPrices(this.getValidProducts(products));
+        double totalCost = this.type == DiscountType.RELATIVE ? totalPrice * this.discountRate : totalPrice - discountRate;
+        double diff = totalPrice - totalCost;
+        return diff > 0 ? diff : totalPrice;
     }
 
     private List<Product> getValidProducts(List<Product> products) {
