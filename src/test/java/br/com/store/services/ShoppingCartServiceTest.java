@@ -29,6 +29,7 @@ public class ShoppingCartServiceTest {
     private Discount absoluteDiscount1;
     private Discount absoluteDiscount2ofCategory1;
     private Discount absoluteDiscount3;
+    private Discount relativeDiscount1;
 
     @Autowired
     private UtilTestService utilTestService;
@@ -45,6 +46,7 @@ public class ShoppingCartServiceTest {
         this.absoluteDiscount1 = this.utilTestService.absoluteDiscount1;
         this.absoluteDiscount2ofCategory1 = this.utilTestService.absoluteDiscount2ofCategory1;
         this.absoluteDiscount3 = this.utilTestService.absoluteDiscount3;
+        this.relativeDiscount1 = this.utilTestService.relativeDiscount1;
     }
 
     /**
@@ -100,7 +102,7 @@ public class ShoppingCartServiceTest {
     }
 
     /**
-     * Verifica se o desconto foi aplicado aos produtos e o valor não ficou menor que zero.
+     * Verifica se o desconto foi aplicado aos produtos e o valor do carrinho não ficou menor que zero.
      */
     @Test
     public void addProductsAndAbsoluteDiscount3() {
@@ -108,5 +110,13 @@ public class ShoppingCartServiceTest {
         this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
         this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount3.getCode());
         assertEquals(0, shoppingCart.getComputedCost());
+    }
+
+    @Test
+    public void addProductsAndRelativeDiscount1() {
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.relativeDiscount1.getCode());
+        assertEquals((product2.getPrice() + product1.getPrice()) * this.relativeDiscount1.getDiscountRate(), shoppingCart.getComputedCost());
     }
 }

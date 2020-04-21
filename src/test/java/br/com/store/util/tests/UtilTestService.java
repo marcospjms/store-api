@@ -36,6 +36,9 @@ public class UtilTestService {
     public Discount absoluteDiscount2ofCategory1;
     public Discount absoluteDiscount3;
 
+    public Discount relativeDiscount1;
+    public Discount relativeDiscount2;
+
     @PostConstruct
     public void setup() {
         this.customer = this.storeUserService.createUser(
@@ -74,8 +77,8 @@ public class UtilTestService {
 
         this.absoluteDiscount1 = this.discountService.save(
                 Discount.builder()
-                        .description("Desconto cumulativo 2")
-                        .code("cupomdoido1")
+                        .description("Desconto abosulto 1")
+                        .code("cupomabsoluto1")
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(50)
                         .cumulative(true)
@@ -86,8 +89,8 @@ public class UtilTestService {
 
         this.absoluteDiscount2ofCategory1 = this.discountService.save(
                 Discount.builder()
-                        .description("Desconto cumulativo 1")
-                        .code("cupomdoido2")
+                        .description("Desconto abosulto 2")
+                        .code("cupomabsoluto2")
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(50)
                         .cumulative(true)
@@ -99,10 +102,22 @@ public class UtilTestService {
 
         this.absoluteDiscount3 = this.discountService.save(
                 Discount.builder()
-                        .description("Desconto cumulativo 3")
-                        .code("cupomdoido3")
+                        .description("Desconto abosulto 3")
+                        .code("cupomabsoluto3")
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(Double.MAX_VALUE)
+                        .cumulative(true)
+                        .start(DateTime.now().minusDays(1))
+                        .end(DateTime.now().plusDays(1))
+                        .build()
+        );
+
+        this.relativeDiscount1 = this.discountService.save(
+                Discount.builder()
+                        .description("Desconto relativo 1")
+                        .code("cupomrelativo1")
+                        .type(DiscountType.RELATIVE)
+                        .discountRate(0.5)
                         .cumulative(true)
                         .start(DateTime.now().minusDays(1))
                         .end(DateTime.now().plusDays(1))
