@@ -45,7 +45,7 @@ public class DiscountService {
 
     public Discount findValidByCode(String code) {
         List<Discount> discounts = this.repository.findByCodeAndDate(code, DateTime.now());
-        return discounts != null && discounts.isEmpty() ? discounts.get(0) : null;
+        return discounts != null && !discounts.isEmpty() ? discounts.get(0) : null;
     }
 
     public boolean has(Long id) {
@@ -63,6 +63,10 @@ public class DiscountService {
 
         Double totalCumulativeDiscount = sumDiscounts(cumulativeDiscounts, products, paymentType);
         Double totalNonCumulativeDiscount = sumDiscounts(nonCumulativeDiscounts, products, paymentType);
+        System.out.println("getApplied");
+        System.out.println(totalCumulativeDiscount);
+        System.out.println(totalNonCumulativeDiscount);
+        System.out.println("<<");
 
         return totalCumulativeDiscount > totalNonCumulativeDiscount ? cumulativeDiscounts : nonCumulativeDiscounts;
     }

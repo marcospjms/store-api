@@ -2,10 +2,11 @@ package br.com.store.services;
 
 
 import br.com.store.model.Category;
+import br.com.store.model.Discount;
 import br.com.store.model.Product;
 import br.com.store.model.ShoppingCart;
-import br.com.store.model.ShoppingCartProduct;
 import br.com.store.model.auth.StoreUser;
+import br.com.store.util.tests.UtilTestService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,7 @@ public class ShoppingCartServiceTest {
     private Category category;
     private Product product1;
     private Product product2;
+    private Discount absoluteDiscount1;
 
     @Autowired
     private UtilTestService utilTestService;
@@ -38,6 +40,7 @@ public class ShoppingCartServiceTest {
         this.category = this.utilTestService.category;
         this.product1 = this.utilTestService.product1;
         this.product2 = this.utilTestService.product2;
+        this.absoluteDiscount1 = this.utilTestService.absoluteDiscount1;
     }
 
     @Test
@@ -57,5 +60,13 @@ public class ShoppingCartServiceTest {
         ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
         this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
         assertEquals(product1.getPrice() + product2.getPrice(), shoppingCart.getCost());
+    }
+
+    @Test
+    public void addProductsAndAbsoluteDiscount1Test() {
+        ShoppingCart shoppingCart  = this.shoppingCartService.addProduct(this.customer.getUsername(), this.product1.getId());
+        this.shoppingCartService.addProduct(this.customer.getUsername(), this.product2.getId());
+        this.shoppingCartService.addDiscount(this.customer.getUsername(), this.absoluteDiscount1.getCode());
+        assertEquals(product1.getPrice() + product2.getPrice() - this.absoluteDiscount1.getDiscountRate(), shoppingCart.getComputedCost());
     }
 }

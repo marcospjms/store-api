@@ -1,8 +1,10 @@
-package br.com.store.services;
+package br.com.store.util.tests;
 
 
 import br.com.store.model.*;
 import br.com.store.model.auth.StoreUser;
+import br.com.store.services.*;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +32,7 @@ public class UtilTestService {
     public Category category;
     public Product product1;
     public Product product2;
-    public Discount absoluteDiscount;
+    public Discount absoluteDiscount1;
 
     @PostConstruct
     public void setup() {
@@ -56,7 +58,7 @@ public class UtilTestService {
                 Product.builder()
                         .name("Produto 1")
                         .description("Descrição do produto 1")
-                        .price(20)
+                        .price(50)
                         .category(this.category)
                         .build()
         );
@@ -69,13 +71,15 @@ public class UtilTestService {
                         .build()
         );
 
-        this.absoluteDiscount = this.discountService.save(
+        this.absoluteDiscount1 = this.discountService.save(
                 Discount.builder()
                         .description("Desconto cumulativo 1")
                         .code("cupomdoido")
                         .type(DiscountType.ABSOLUTE)
                         .discountRate(50)
                         .category(this.category)
+                        .start(DateTime.now().minusDays(1))
+                        .end(DateTime.now().plusDays(1))
                         .build()
         );
     }

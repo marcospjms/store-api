@@ -23,4 +23,8 @@ public class ShoppingCart extends AbstractEntity {
 
     @OneToOne(optional = false)
     private StoreUser storeUser;
+
+    public double getComputedCost() {
+        return this.cost - this.discount;
+    }
 }

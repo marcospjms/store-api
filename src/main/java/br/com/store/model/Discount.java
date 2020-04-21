@@ -85,6 +85,10 @@ public class Discount extends AbstractEntity {
         );
     }
 
+    private double calculate(Product product) {
+        return Math.min(0, this.type == DiscountType.RELATIVE ? product.getPrice() * this.discountRate : product.getPrice() - discountRate);
+    }
+
     private List<Product> getValidProducts(List<Product> products) {
         return products.stream().filter(product -> this.isValidProduct(product)).collect(Collectors.toList());
     }

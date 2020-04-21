@@ -109,6 +109,8 @@ public class ShoppingCartService {
         shoppingCart.setDiscount(this.discountService.calcDiscount(discounts, products, shoppingCart.getPaymentType()));
         shoppingCart.setCost(this.productService.calcTotalCost(products));
 
+        System.out.println(">>>>>>>");
+        System.out.println(this.discountService.calcDiscount(discounts, products, shoppingCart.getPaymentType()));
         return this.save(shoppingCart);
     }
 
