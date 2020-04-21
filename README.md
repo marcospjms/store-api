@@ -1,4 +1,3 @@
-O projeto foi
 Criar pacote:
 mvn -f pom.xml clean package
 
