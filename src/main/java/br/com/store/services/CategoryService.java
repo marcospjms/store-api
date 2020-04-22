@@ -42,4 +42,8 @@ public class CategoryService {
     public boolean has(Long id) {
         return repository.findById(id).isPresent();
     }
+
+    public void deleteAll() {
+        this.repository.deleteAll();
+    }
 }

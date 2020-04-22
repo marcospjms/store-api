@@ -3,13 +3,9 @@ package br.com.store.util.tests;
 import br.com.store.configs.security.SecurityConstants;
 import br.com.store.model.auth.StoreUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.net.HttpHeaders;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -23,10 +19,6 @@ import java.util.Date;
 
 @Service
 public class AdminRestTemplate extends RestTemplate {
-
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     @Autowired
     private UtilTestService utilTestService;

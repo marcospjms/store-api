@@ -135,4 +135,11 @@ public class ShoppingCartService {
     private List<Product> toProducts(List<ShoppingCartProduct> shoppingCartProducts) {
         return shoppingCartProducts.stream().map(scp -> scp.getProduct()).collect(Collectors.toList());
     }
+
+    public void deleteAll() {
+        this.repository.deleteAll();
+        this.shoppingCartDiscountRepository.deleteAll();
+        this.shoppingCartProductRepository.deleteAll();
+
+    }
 }

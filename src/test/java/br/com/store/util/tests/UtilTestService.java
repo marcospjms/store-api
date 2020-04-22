@@ -49,6 +49,11 @@ public class UtilTestService {
 
     @PostConstruct
     public void setup() {
+        this.shoppingCartService.deleteAll();
+        this.storeUserService.deleteAll();
+        this.discountService.deleteAll();
+        this.productService.deleteAll();
+        this.categoryService.deleteAll();
         this.adminUser = this.storeUserService.createUser(
                 StoreUser.builder()
                         .name("Paulo José")

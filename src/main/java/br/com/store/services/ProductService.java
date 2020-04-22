@@ -46,4 +46,8 @@ public class ProductService {
     public static double calcTotalCost(List<Product> products) {
         return Product.sumPrices(products);
     }
+
+    public void deleteAll() {
+        this.repository.deleteAll();
+    }
 }

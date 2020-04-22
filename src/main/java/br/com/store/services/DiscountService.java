@@ -91,4 +91,8 @@ public class DiscountService {
                 Double::sum
         );
     }
+
+    public void deleteAll() {
+        this.repository.deleteAll();
+    }
 }
